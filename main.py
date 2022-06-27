@@ -11,24 +11,27 @@ app = Flask(__name__)
 
 @app.route('/', methods=["GET"])  # http://localhost(/) M <-- V <-- View (HTML)  C <- COntroller
 def index():
-    return render_template("index.html")
+    return render_template("layout.html")
 
 
-@app.route('/login', methods=["POST"])  # http://localhost(/) M <-- V <-- View (HTML)  C <- COntroller
+@app.route('/login', methods=["GET", "POST"])  # http://localhost(/) M <-- V <-- View (HTML)  C <- COntroller
 def login():
-    email = request.form.get("email")
-    password = request.form.get("password")
+    if request.method == "GET":
+        return render_template("login.html")
+    elif request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
 
-    tryUser = db.query(User).filter_by(email=email).first()
+        tryUser = db.query(User).filter_by(email=email).first()
 
-    if not tryUser:
-        return "This user does not exist - try registration on /register"
-    else:
-        tryPassword = hashlib.sha256(password.encode()).hexdigest()
-        if tryPassword == tryUser.password:
-            return "Welcome, %s" % tryUser.email
+        if not tryUser:
+            return "This user does not exist - try registration on /register"
         else:
-            return "Wrong username/password!"
+            tryPassword = hashlib.sha256(password.encode()).hexdigest()
+            if tryPassword == tryUser.password:
+                return "Welcome, %s" % tryUser.email
+            else:
+                return "Wrong username/password!"
 
 
 @app.route('/register', methods=["GET", "POST"])  # http://localhost(/) M <-- V <-- View (HTML)  C <- COntroller
