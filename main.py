@@ -2,13 +2,12 @@ from flask import Flask
 import hashlib
 from flask import render_template, request, make_response, redirect, url_for
 from models.user import User
+from models.post import Post
 from models.settings import db
-import uuid;
+import uuid
 
 app = Flask(__name__)
 
-
-# db.create_all()
 
 @app.route('/', methods=["GET"])  # http://localhost(/) M <-- V <-- View (HTML)  C <- COntroller
 def index():
@@ -65,20 +64,51 @@ def register():
 
 @app.route('/dashboard', methods=["GET"])  # http://localhost(/) M <-- V <-- View (HTML)  C <- Controller
 def dashboard():
+    if isLoggedIn():
+        return render_template("dashboard.html", user=getCurrentUser(), posts=db.query(Post).all())
+    else:
+        return redirectToLogin()
+
+
+@app.route('/post-add-form', methods=["GET"])
+def post_form():
+    return render_template("post_add_form.html") if isLoggedIn() else redirectToLogin()
+
+
+@app.route('/post/<id>', methods=["GET", "DELETE", "POST"])
+def handlePost():
+    return "NOT IMPLEMENTED"
+
+
+@app.route('/post', methods=["POST"])
+def createPost():
+    title = request.form.get('title')
+    description = request.form.get('description')
+    author = getCurrentUser()
+
+    Post.create(title=title, description=description, author=author)
+
+    return redirectToRoute("dashboard")
+
+
+def isLoggedIn():
     session_token = request.cookies.get("session_token")
+    user = getCurrentUser() if session_token else None
 
-    if session_token:
-        user = db.query(User).filter_by(session_token=session_token).first()
-    else:
-        user = None
+    return user is not None
 
-    if user:
-        return render_template("dashboard.html", user=user)
-    else:
-        response = make_response(redirect(url_for("index")))
-        return response
 
-    return "welcome to dashboard"
+def redirectToLogin():
+    return redirectToRoute("index")
+
+
+def getCurrentUser():
+    session_token = request.cookies.get("session_token")
+    return db.query(User).filter_by(session_token=session_token).first()
+
+
+def redirectToRoute(route):
+    return make_response(redirect(url_for(route)))
 
 
 if __name__ == '__main__':

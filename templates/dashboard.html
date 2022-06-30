@@ -1,13 +1,32 @@
 {% extends "layout/loggedout.html" %}
 {% block content %}
-   <div class="card">
-        <div class="card-body bg-light">
-            <div class="card-title">
-                Welcome to app, {{user.email}}!
-            </div>
-            <div class="card-text">
-               # Content
-            </div>
+<div class="card">
+    <div class="card-body bg-light">
+        <div class="card-title">
+            Welcome to app, {{user.email}}!
+        </div>
+        <div class="card-text">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <td>ID</td>
+                    <td>Title</td>
+                    <td>Author</td>
+                    <td>Created at</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for post in posts %}
+                <tr>
+                    <td>{{post.id}}</td>
+                    <td>{{post.title}}</td>
+                    <td>{{post.author.email}}</td>
+                    <td>{{post.created_at}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
+</div>
 {% endblock %}

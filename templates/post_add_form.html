@@ -1,0 +1,25 @@
+{% extends "layout/loggedin.html" %}
+{% block content %}
+<div class="card">
+    <div class="card-body bg-light">
+        <div class="card-title">
+            Add new post
+        </div>
+        <div class="card-text">
+            <form action="/post" method="post">
+                <div class="col-auto">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+                <div class="col-auto">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea id="description" name="description" class="form-control" required></textarea>
+                </div>
+                <div class="col-auto mt-2">
+                    <button type="submit" class="btn btn-success">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
