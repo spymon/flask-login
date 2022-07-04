@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from models.settings import db
 
 
@@ -11,6 +10,7 @@ class Post(db.Model):
     author = db.relationship("User")  # orm relationship
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+    deleted_at = None
 
     @classmethod
     def create(self, title, description, author):
@@ -18,3 +18,11 @@ class Post(db.Model):
         db.add(newPost)
         db.commit()
         return newPost
+
+
+    @classmethod
+    def delete_post(self):
+        deletedPost = self(deleted_at=datetime.utcnow)
+        db.add(deletedPost)
+        db.commit()
+        return 'Deleted sučes'

@@ -76,8 +76,17 @@ def post_form():
 
 
 @app.route('/post/<id>', methods=["GET", "DELETE", "POST"])
-def handlePost():
-    return "NOT IMPLEMENTED"
+def handlePost(id):
+    message = None
+
+    if request.method == "DELETE":
+        post = db.query(Post).filter_by(id=id)
+        post.delete_post()
+        db.commit()
+
+        message = "Sučes"
+
+    return message if message else None
 
 
 @app.route('/post', methods=["POST"])
